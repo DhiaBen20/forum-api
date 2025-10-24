@@ -1,31 +1,31 @@
 # API Endpoints
 
-## Threads Endpoints
+## Posts Endpoints
 
-### GET /threads
-returns a list of threads, with author info, number of likes, comments, views for each thread.
+### GET /posts
+returns a list of posts, with author info, number of likes, comments, views for each post.
 
-### GET /threads/{thread}
-returns a single thread, with author info, number of likes, comments, views for each thread.
+### GET /posts/{post}
+returns a single post, with author info, number of likes, comments, views for each post.
 
-### POST /threads
-stores a thread for a user.
+### POST /posts
+stores a post for a user.
 
 **Request Body:**
-- `title` (string): the thread title.
-- `body` (string): the thread body.
+- `title` (string): the post title.
+- `body` (string): the post body.
 
 **Response:**
 - 201 Created
 - 404 Not Found
 - 422 Unprocessable Content
 
-### PATCH /threads/{thread}
-updates a thread for a user.
+### PATCH /posts/{post}
+updates a post for a user.
 
 **Request Body:**
-- `title` (string): the thread title.
-- `body` (string): the thread body.
+- `title` (string): the post title.
+- `body` (string): the post body.
 
 **Response:**
 - 200 Ok
@@ -33,8 +33,8 @@ updates a thread for a user.
 - 404 Not Found
 - 422 Unprocessable Content
 
-### DELETE /threads/{thread}
-deletes a thread for a user.
+### DELETE /posts/{post}
+deletes a post for a user.
 
 **Response:**
 - 204 No Content

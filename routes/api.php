@@ -1,8 +1,7 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\PostController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+Route::get('posts', [PostController::class, 'index'])->name('posts.index');
+Route::get('posts/{post:slug}', [PostController::class, 'show'])->name('posts.show');
