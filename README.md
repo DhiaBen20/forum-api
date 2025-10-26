@@ -17,7 +17,6 @@ stores a post for a user.
 
 **Response:**
 - 201 Created
-- 404 Not Found
 - 422 Unprocessable Content
 
 ### PATCH /posts/{post}

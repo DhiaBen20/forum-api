@@ -26,6 +26,6 @@ class UserResource extends JsonResource
         return $this->basic ? [
             'id' => $this->id,
             'name' => $this->name,
-        ] : $this->resource->toArray();
+        ] : $this->resource->only(['id', 'name', 'email'])->toArray();
     }
 }
