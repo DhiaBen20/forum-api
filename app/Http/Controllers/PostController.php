@@ -9,7 +9,6 @@ use App\Models\User;
 use Illuminate\Container\Attributes\CurrentUser;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 
@@ -18,14 +17,13 @@ class PostController extends Controller
     public function index(): JsonResponse
     {
         $posts = Post::query()
-            ->withCount(['replies', 'likes'])
+            ->withCount(['comments', 'likes'])
             ->with('user')
-            ->whereNull('parent_id')
             ->orderBy('posts.created_at', 'desc')
             ->orderBy('posts.id', 'asc')
             ->cursorPaginate(15);
 
-        return response()->json(new PostCollection($posts), 200);
+        return response()->json(PostCollection::make($posts), 200);
     }
 
     public function show(mixed $post): JsonResponse
@@ -33,10 +31,10 @@ class PostController extends Controller
         $post = Post::query()
             ->where('slug', $post)
             ->with('user')
-            ->withCount(['likes', 'replies'])
+            ->withCount(['likes', 'comments'])
             ->firstOrFail();
 
-        return response()->json(new PostResource($post), 200);
+        return response()->json(PostResource::make($post), 200);
     }
 
     public function store(Request $request, #[CurrentUser()] User $user): JsonResponse
@@ -57,7 +55,7 @@ class PostController extends Controller
             'user_id' => $user->id,
         ]);
 
-        return response()->json(new PostResource($post), 201);
+        return response()->json(PostResource::make($post), 201);
     }
 
     public function update(Request $request, Post $post, #[CurrentUser()] User $user): JsonResponse
@@ -74,15 +72,15 @@ class PostController extends Controller
             'body' => $validated['body'],
         ]);
 
-        return response()->json(new PostResource($post), 200);
+        return response()->json(PostResource::make($post), 200);
     }
 
-    public function destroy(Post $post, #[CurrentUser()] User $user): Response
+    public function destroy(Post $post, #[CurrentUser()] User $user): JsonResponse
     {
         Gate::allowIf(fn () => $post->user_id === $user->id);
 
         $post->delete();
 
-        return response()->noContent();
+        return response()->json(status: 204);
     }
 }
