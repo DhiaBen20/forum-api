@@ -10,6 +10,7 @@ use App\Models\User;
 use Illuminate\Container\Attributes\CurrentUser;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
 class CommentController extends Controller
@@ -18,6 +19,7 @@ class CommentController extends Controller
     {
         $comments = $post->comments()
             ->withCount(['likes', 'replies'])
+            ->isLikedByUser(Auth::guard('sanctum')->user())
             ->with('user')
             ->orderBy('created_at')
             ->simplePaginate(15);

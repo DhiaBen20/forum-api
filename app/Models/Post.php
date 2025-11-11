@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -57,5 +60,20 @@ class Post extends Model
     public function comments(): HasMany
     {
         return $this->hasMany(Comment::class);
+    }
+
+    /**
+     * @param  Builder<Post>  $query
+     */
+    #[Scope]
+    protected function isLikedByUser(Builder $query, ?Authenticatable $user): void
+    {
+        if (! $user || ! ($user instanceof User)) {
+            return;
+        }
+
+        $query->withExists(['likes' => function (Builder $query) use ($user) {
+            $query->where('user_id', $user->id);
+        }]);
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ReplyController;
 use App\Models\User;
@@ -30,4 +31,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::patch('comments/{comment}', [CommentController::class, 'update'])->name('comments.update');
     Route::delete('comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
+});
+
+// Likes Routes
+Route::middleware('auth:sanctum')->group(function () {
+    Route::Post('likes/{type}/{likeable}', [LikeController::class, 'store'])->whereIn('type', ['comments', 'posts']);
+    Route::delete('likes/{type}/{likeable}', [LikeController::class, 'destroy'])->whereIn('type', ['comments', 'posts']);
 });
