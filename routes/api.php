@@ -3,7 +3,6 @@
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PostController;
-use App\Http\Controllers\ReplyController;
 use App\Models\User;
 use Illuminate\Container\Attributes\CurrentUser;
 use Illuminate\Support\Facades\Route;
@@ -22,13 +21,9 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 // Comment and Reply Routes
-Route::get('posts/{post}/comments', [CommentController::class, 'index'])->name('comments.index');
-Route::get('comments/{comment}/replies', [ReplyController::class, 'index'])->name('replies.index');
-
+Route::get('/comments', [CommentController::class, 'index']);
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('posts/{post}/comments', [CommentController::class, 'store'])->name('comments.store');
-    Route::post('comments/{comment}/replies', [ReplyController::class, 'store'])->name('replies.store');
-
+    Route::post('/comments', [CommentController::class, 'store']);
     Route::patch('comments/{comment}', [CommentController::class, 'update'])->name('comments.update');
     Route::delete('comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
 });

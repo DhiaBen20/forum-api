@@ -16,11 +16,11 @@ class CommentResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'body' => $this->body,
             'bodyInHtml' => $this->body_in_html,
             'user' => UserResource::make($this->whenLoaded('user')),
             'likesCount' => $this->whenCounted('likes'),
             'repliesCount' => $this->whenCounted('replies'),
+            'isLiked' => $this->whenExistsLoaded('likes', default: false),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

@@ -45,6 +45,7 @@ class PostController extends Controller
         $validated = $request->validate([
             'title' => ['required', 'max:256'],
             'body' => ['required', 'max:5000'],
+            'channel' => ['required', 'exists:channels,id'],
         ]);
 
         $slug = Str::lower($validated['title']);
@@ -55,6 +56,7 @@ class PostController extends Controller
             'title' => $validated['title'],
             'body' => $validated['body'],
             'slug' => $duplicatesCount ? $slug.'-'.($duplicatesCount + 1) : $slug,
+            'channel_id' => $validated['channel_id'],
             'user_id' => $user->id,
         ]);
 
@@ -68,11 +70,13 @@ class PostController extends Controller
         $validated = $request->validate([
             'title' => ['required', 'max:256'],
             'body' => ['required', 'max:5000'],
+            'channel_id' => ['required', 'exists:channels,id'],
         ]);
 
         $post->update([
             'title' => $validated['title'],
             'body' => $validated['body'],
+            'channel_id' => $validated['channel_id'],
         ]);
 
         return response()->json(PostResource::make($post), 200);

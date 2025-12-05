@@ -55,28 +55,36 @@ Delete a post owned by the authenticated user.
 
 ## Comments Endpoints
 
-### GET /posts/{post}/comments
+### GET /comments
+Retrieves all comments for the specified post or comment. 
 
-Retrieve all comments for the specified post. Each comment includes author details and the number of likes.
-
-### POST /posts/{post}/comments/{comment}
-
-Create or submit a comment related to a post (endpoint includes the comment identifier as specified).
-
-**Request Body:**
-
--   `body` (string): the comment body.
+**Request params**
+-   `parent` (int): id of comment parent
+-   `type` (string): comment or post
 
 **Response:**
-
--   201 Created
+-   200 Ok
 -   401 Unauthorized
 -   404 Not Found
+
+### POST /comments
+Create a new comment for the specified parent type.
+
+**Request Body**
+-   `type` (string): comment_to_post or reply_to_comment or reply_to_post
+-   `body` (string): the comment body
+-   `post` (int): required if type is comment_to_post
+-   `comment` (int): required if type is reply_to_comment or reply_to_reply
+-   `replyTo` (int): required if type is reply_to_reply
+
+**Response:**
+-   201 Created
+-   401 Unauthorized
 -   422 Unprocessable Content
 
-### PATCH /posts/{post}/comment
+### PATCH /comments/{comment}
 
-Modify an existing comment for the given post.
+Update an existing comment owned by the authenticated user.
 
 **Request Body:**
 
@@ -90,9 +98,9 @@ Modify an existing comment for the given post.
 -   404 Not Found
 -   422 Unprocessable Content
 
-### DELETE /posts/{post}/comments/{comment}
+### DELETE /comments/{comment}
 
-Remove a comment from the specified post.
+Removes the specified comment
 
 **Response:**
 
@@ -100,3 +108,23 @@ Remove a comment from the specified post.
 -   401 Unauthorized
 -   403 Forbidden
 -   404 Not Found
+
+## Likes Endpoints
+### POST /likes/posts/{likeable}
+### POST /likes/comments/{likeable}
+Stores a like for the current user to the post or the comment with the id likeable
+
+**Response:**
+- 204 No Content
+- 401 Unauthorized
+- 404 Not found
+- 409 Conflict
+
+### DELETE /likes/posts/{likeable}
+### DELETE /likes/comments/{likeable}
+Removes a like for the current user from  the post or the comment with the id likeable
+
+**Response:**
+- 204 No Content
+- 401 Unauthorized
+- 404 Not found

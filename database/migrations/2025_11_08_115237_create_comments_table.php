@@ -16,8 +16,9 @@ return new class extends Migration
             $table->text('body');
             $table->foreignId('user_id')->index();
             $table->foreignId('post_id')->nullable()->index();
+            // another way is instead of comment_id and reply_to_id just use one parent_id column
             $table->foreignId('comment_id')->nullable()->index();
-            $table->foreignId('reply_to_id')->nullable();
+            $table->foreignId('reply_to_id')->nullable()->index();
             $table->timestamps();
         });
     }

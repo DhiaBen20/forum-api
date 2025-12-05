@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->index();
             $table->morphs('likeable');
-            $table->index(["likeable_type", "likeable_id"]);
             $table->timestamps();
         });
     }
