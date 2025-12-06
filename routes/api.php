@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\CreateTokenController;
+use App\Http\Controllers\DeleteTokenController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\RegisterUserController;
@@ -13,8 +14,9 @@ Route::get('user', function (#[CurrentUser()] User $user) {
     return $user;
 })->middleware('auth:sanctum');
 
-Route::post('/users', RegisterUserController::class);
-Route::post('/tokens/create', CreateTokenController::class);
+Route::post('/users', RegisterUserController::class)->name('users.store');
+Route::post('/tokens/create', CreateTokenController::class)->name('tokens.create');
+Route::delete('/tokens/current', DeleteTokenController::class)->middleware('auth:sanctum')->name('tokens.destroy');
 
 // Post Routes
 Route::get('posts', [PostController::class, 'index'])->name('posts.index');
