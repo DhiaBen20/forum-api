@@ -19,6 +19,6 @@ class RegisterUserController extends Controller
 
         User::create($data);
 
-        return response()->json([], 101);
+        return response()->json([], 201);
     }
 }

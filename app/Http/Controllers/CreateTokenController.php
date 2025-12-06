@@ -26,7 +26,7 @@ class CreateTokenController extends Controller
         if (RateLimiter::tooManyAttempts($key, 5)) {
             throw ValidationException::withMessages(
                 ['email' => 'Too many attempts']
-            );
+            )->status(429);
         }
 
         if (! $user || ! Hash::check($request->string('password')->value(), $user->password)) {
