@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\CreateTokenController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\RegisterUserController;
 use App\Models\User;
 use Illuminate\Container\Attributes\CurrentUser;
 use Illuminate\Support\Facades\Route;
@@ -10,6 +12,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('user', function (#[CurrentUser()] User $user) {
     return $user;
 })->middleware('auth:sanctum');
+
+Route::post('/users', RegisterUserController::class);
+Route::post('/tokens/create', CreateTokenController::class);
 
 // Post Routes
 Route::get('posts', [PostController::class, 'index'])->name('posts.index');
