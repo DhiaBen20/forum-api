@@ -23,7 +23,7 @@ class UpdatePostTest extends TestCase
     public function test_user_can_update_own_post(): void
     {
         $post = Post::factory()->create();
-        assert($post->user !== null);
+
         Sanctum::actingAs($post->user);
 
         $response = $this->patchJson($this->action($post), [
