@@ -30,9 +30,8 @@ class PostResource extends JsonResource
             'id' => $this->id,
             'slug' => $this->slug,
             'title' => $this->title,
-            'excerpt' => $this->when($this->excerpt, Str::of(strip_tags($this->body_in_html))->replace("\n", ' ')->excerpt()),
+            'excerpt' => $this->when($this->excerpt, $this->excerpt()),
             'body' => $this->when(! $this->excerpt, $this->body),
-            'body_in_html' => $this->when(! $this->excerpt, $this->body_in_html),
             'user' => UserResource::make($this->whenLoaded('user')),
             'commentsCount' => $this->whenCounted('comments'),
             'likesCount' => $this->whenCounted('likes'),
@@ -40,5 +39,15 @@ class PostResource extends JsonResource
             'createdAt' => $this->created_at,
             'updatedAt' => $this->updated_at,
         ];
+    }
+
+    protected function excerpt(): string
+    {
+        $bodyInHtml = Str::markdown($this->body, [
+            'html_input' => 'strip',
+            'allow_unsafe_links' => false,
+        ]);
+
+        return Str::of(strip_tags($bodyInHtml))->replace("\n", ' ')->excerpt() ?? '';
     }
 }

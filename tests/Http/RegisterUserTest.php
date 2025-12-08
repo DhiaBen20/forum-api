@@ -7,10 +7,6 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
-/**
- * @phpstan-type Fields array<string,string>
- * @phpstan-type Errors array<string>
- */
 class RegisterUserTest extends TestCase
 {
     use RefreshDatabase;
@@ -31,10 +27,6 @@ class RegisterUserTest extends TestCase
         ]);
     }
 
-    /**
-     * @param  Fields  $data
-     * @param  Errors  $errors
-     */
     #[DataProvider('invalidData')]
     public function test_validation_rules(array $data, array $errors): void
     {
@@ -46,9 +38,6 @@ class RegisterUserTest extends TestCase
             ->assertJsonValidationErrors($errors);
     }
 
-    /**
-     * @return array<string,array{Fields,Errors}>
-     */
     public static function invalidData(): array
     {
         return [

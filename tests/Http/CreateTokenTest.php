@@ -7,10 +7,6 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
-/**
- * @phpstan-type Fields array<string,string>
- * @phpstan-type Errors array<string>
- */
 class CreateTokenTest extends TestCase
 {
     use RefreshDatabase;
@@ -61,10 +57,6 @@ class CreateTokenTest extends TestCase
         $response->assertJsonPath('errors.email.0', 'Too many attempts');
     }
 
-    /**
-     * @param  Fields  $data
-     * @param  Errors  $errors
-     */
     #[DataProvider('invalidData')]
     public function test_validation_fails_for_invalid_data(array $data, array $errors): void
     {
@@ -73,9 +65,6 @@ class CreateTokenTest extends TestCase
             ->assertJsonValidationErrors($errors);
     }
 
-    /**
-     * @return array<string,array{Fields,Errors}>
-     */
     public static function invalidData(): array
     {
         return [

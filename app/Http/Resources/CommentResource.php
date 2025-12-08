@@ -16,7 +16,6 @@ class CommentResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'bodyInHtml' => $this->body_in_html,
             'user' => UserResource::make($this->whenLoaded('user')),
             'likesCount' => $this->whenCounted('likes'),
             'repliesCount' => $this->whenCounted('replies'),

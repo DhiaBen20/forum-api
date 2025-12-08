@@ -48,15 +48,15 @@ class PostController extends Controller
             'channel' => ['required', 'exists:channels,id'],
         ]);
 
-        $slug = Str::lower($validated['title']);
+        $slug = Str::slug($validated['title']);
 
-        $duplicatesCount = Post::query()->whereLike('slug', "$validated[title]%")->count();
+        $duplicatesCount = Post::query()->whereLike('slug', "$slug%")->count();
 
         $post = Post::create([
             'title' => $validated['title'],
             'body' => $validated['body'],
             'slug' => $duplicatesCount ? $slug.'-'.($duplicatesCount + 1) : $slug,
-            'channel_id' => $validated['channel_id'],
+            'channel_id' => $validated['channel'],
             'user_id' => $user->id,
         ]);
 
@@ -70,13 +70,13 @@ class PostController extends Controller
         $validated = $request->validate([
             'title' => ['required', 'max:256'],
             'body' => ['required', 'max:5000'],
-            'channel_id' => ['required', 'exists:channels,id'],
+            'channel' => ['required', 'exists:channels,id'],
         ]);
 
         $post->update([
             'title' => $validated['title'],
             'body' => $validated['body'],
-            'channel_id' => $validated['channel_id'],
+            'channel_id' => $validated['channel'],
         ]);
 
         return response()->json(PostResource::make($post), 200);

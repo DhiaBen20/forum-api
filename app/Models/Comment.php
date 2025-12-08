@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\HasMarkdown;
 use App\Likeable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,18 +11,17 @@ use Illuminate\Support\Carbon;
 /**
  * @property-read int $id
  * @property-read string $body
- * @property-read string $body_in_html
  * @property-read int|null $post_id
- * @property-read int $user_id
  * @property-read int|null $comment_id
  * @property-read int|null $reply_to_id_id
+ * @property-read int $user_id
  * @property-read Carbon $created_at
  * @property-read Carbon $updated_at
  */
 class Comment extends Model
 {
     /** @use Likeable<$this> */
-    use HasMarkdown, Likeable;
+    use Likeable;
 
     /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo

@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\HasMarkdown;
 use App\Likeable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -15,7 +14,6 @@ use Illuminate\Support\Carbon;
  * @property-read string $title
  * @property-read string $slug
  * @property-read string $body
- * @property-read string $body_in_html
  * @property-read int $user_id
  * @property-read Carbon $created_at
  * @property-read Carbon $updated_at
@@ -26,7 +24,7 @@ class Post extends Model
      * @use HasFactory<\Database\Factories\PostFactory>
      * @use Likeable<$this>
      */
-    use HasFactory, HasMarkdown, Likeable;
+    use HasFactory, Likeable;
 
     /**
      * @return BelongsTo<User, $this>
