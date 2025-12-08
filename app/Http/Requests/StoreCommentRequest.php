@@ -42,7 +42,7 @@ class StoreCommentRequest extends FormRequest
         if ($type === CommentType::ReplyToReply) {
             $rules['replyTo'] = [
                 'required',
-                new Exists('comments', 'id')->where('comment_id', $this->integer('comment_id')),
+                new Exists('comments', 'id')->where('comment_id', $this->integer('comment')),
             ];
         }
 
