@@ -38,4 +38,16 @@ class Comment extends Model
     {
         return $this->hasMany(Comment::class);
     }
+
+    /** @return BelongsTo<Post, $this> */
+    public function post(): BelongsTo
+    {
+        return $this->belongsTo(Post::class);
+    }
+
+    /** @return BelongsTo<Comment, $this> */
+    public function comment(): BelongsTo
+    {
+        return $this->belongsTo(Comment::class);
+    }
 }

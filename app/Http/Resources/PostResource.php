@@ -35,7 +35,7 @@ class PostResource extends JsonResource
             'user' => UserResource::make($this->whenLoaded('user')),
             'commentsCount' => $this->whenCounted('comments'),
             'likesCount' => $this->whenCounted('likes'),
-            'isLiked' => $this->whenExistsLoaded('likes', default: false),
+            'isLiked' => $this->likes_exists ?? false,
             'createdAt' => $this->created_at,
             'updatedAt' => $this->updated_at,
         ];
