@@ -29,12 +29,12 @@ class LikeController extends Controller
             return response()->json(status: 409);
         }
 
-        $likeableModel->likes()->create(['user_id' => $user->id])->create();
+        $likeableModel->likes()->create(['user_id' => $user->id]);
 
         return response()->json(status: 204);
     }
 
-    public function destroy(#[CurrentUser()] User $user, string $likeable, string $type): JsonResponse
+    public function destroy(#[CurrentUser()] User $user, string $type, string $likeable): JsonResponse
     {
         $likeableModel = $this->getLikeableRecord($type, $likeable);
 
@@ -42,7 +42,7 @@ class LikeController extends Controller
             return response()->json(status: 404);
         }
 
-        $likeableModel->likes()->create(['user_id' => $user->id])->delete();
+        $likeableModel->likes()->where('user_id', $user->id)->delete();
 
         return response()->json(status: 204);
     }
