@@ -9,8 +9,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /** @mixin User */
 class UserResource extends JsonResource
 {
-    protected bool $basic = false;
-
     /**
      * @return array<string, mixed>
      */

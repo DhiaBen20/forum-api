@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Container\Attributes\CurrentUser;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -10,9 +11,9 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
 
-class CreateTokenController extends Controller
+class TokenController extends Controller
 {
-    public function __invoke(Request $request): JsonResponse
+    public function store(Request $request): JsonResponse
     {
         $request->validate([
             'email' => ['required', 'email'],
@@ -40,5 +41,12 @@ class CreateTokenController extends Controller
         $token = $user->createToken('name');
 
         return response()->json(['token' => $token->plainTextToken], 201);
+    }
+
+    public function destroy(#[CurrentUser()] User $user): JsonResponse
+    {
+        $user->currentAccessToken()->delete();
+
+        return response()->json([], 204);
     }
 }
