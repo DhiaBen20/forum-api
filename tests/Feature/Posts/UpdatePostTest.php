@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Http\Posts;
+namespace Tests\Feature\Posts;
 
 use App\Http\Controllers\PostController;
 use App\Models\Channel;

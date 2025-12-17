@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\LikeStored;
 use App\Models\Comment;
 use App\Models\Post;
 use App\Models\User;
@@ -30,6 +31,8 @@ class LikeController extends Controller
         }
 
         $likeableModel->likes()->create(['user_id' => $user->id]);
+
+        LikeStored::dispatch($user, $likeableModel);
 
         return response()->json(status: 204);
     }

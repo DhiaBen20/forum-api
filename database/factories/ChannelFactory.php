@@ -18,7 +18,7 @@ class ChannelFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $name = implode(' ', fake()->words(2)),
+            'name' => $name = implode(' ', fake()->unique()->words(2)),
             'slug' => Str::slug($name),
         ];
     }

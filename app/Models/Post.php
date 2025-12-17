@@ -15,6 +15,7 @@ use Illuminate\Support\Carbon;
  * @property-read string $slug
  * @property-read string $body
  * @property-read int $user_id
+ * @property-read User|null $user
  * @property-read Carbon $created_at
  * @property-read Carbon $updated_at
  */

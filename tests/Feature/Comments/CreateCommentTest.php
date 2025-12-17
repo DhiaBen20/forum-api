@@ -1,13 +1,16 @@
 <?php
 
-namespace Tests\Http\Comments;
+namespace Tests\Feature\Comments;
 
 use App\CommentType;
+use App\Events\CommentStored;
 use App\Http\Controllers\CommentController;
+use App\Listeners\SendCommentNotification;
 use App\Models\Comment;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Event;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
@@ -74,6 +77,7 @@ class CreateCommentTest extends TestCase
     {
         $user = $this->sanctumSignIn();
         $post = Post::factory()->create();
+        Event::fake();
 
         $response = $this->postJson($this->action(), [
             'body' => 'My comment body',
@@ -83,6 +87,14 @@ class CreateCommentTest extends TestCase
 
         $response->assertCreated()
             ->assertJsonPath('body', 'My comment body');
+
+        Event::assertDispatched(function (CommentStored $event) use ($user, $post) {
+            return $event->currentUser->is($user) &&
+                $event->comment->is($post->comments()->first()) &&
+                $event->type === CommentType::CommentToPost;
+        });
+
+        Event::assertListening(CommentStored::class, SendCommentNotification::class);
 
         $this->assertDatabaseHas('comments', [
             'post_id' => $post->id,
@@ -98,6 +110,8 @@ class CreateCommentTest extends TestCase
         $user = $this->sanctumSignIn();
         $comment = Comment::factory()->create();
 
+        Event::fake();
+
         $response = $this->postJson($this->action(), [
             'body' => 'My reply body',
             'type' => CommentType::ReplyToComment->value,
@@ -106,6 +120,14 @@ class CreateCommentTest extends TestCase
 
         $response->assertCreated()
             ->assertJsonPath('body', 'My reply body');
+
+        Event::assertDispatched(function (CommentStored $event) use ($user, $comment) {
+            return $event->currentUser->is($user) &&
+                $event->comment->is($comment->replies()->first()) &&
+                $event->type === CommentType::ReplyToComment;
+        });
+
+        Event::assertListening(CommentStored::class, SendCommentNotification::class);
 
         $this->assertDatabaseHas('comments', [
             'comment_id' => $comment->id,
@@ -124,6 +146,8 @@ class CreateCommentTest extends TestCase
             'comment_id' => $parentComment->id,
         ]);
 
+        Event::fake();
+
         $response = $this->postJson($this->action(), [
             'body' => 'My nested reply',
             'type' => CommentType::ReplyToReply->value,
@@ -133,6 +157,14 @@ class CreateCommentTest extends TestCase
 
         $response->assertCreated()
             ->assertJsonPath('body', 'My nested reply');
+
+        Event::assertDispatched(function (CommentStored $event) use ($user, $targetReply) {
+            return $event->currentUser->is($user) &&
+                $event->comment->is(Comment::where('reply_to_id', $targetReply->id)->first()) &&
+                $event->type === CommentType::ReplyToReply;
+        });
+
+        Event::assertListening(CommentStored::class, SendCommentNotification::class);
 
         $this->assertDatabaseHas('comments', [
             'comment_id' => $parentComment->id,

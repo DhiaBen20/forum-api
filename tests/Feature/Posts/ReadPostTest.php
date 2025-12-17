@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Http\Posts;
+namespace Tests\Feature\Posts;
 
 use App\Models\Comment;
 use App\Models\Like;

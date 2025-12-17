@@ -35,3 +35,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::Post('likes/{type}/{likeable}', [LikeController::class, 'store'])->whereIn('type', ['comments', 'posts']);
     Route::delete('likes/{type}/{likeable}', [LikeController::class, 'destroy'])->whereIn('type', ['comments', 'posts']);
 });
+
+// Notification Routes
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/notifications/unread', [App\Http\Controllers\NotificationController::class, 'index']);
+    Route::patch('/notifications/mark-all-read', [App\Http\Controllers\NotificationController::class, 'markAllAsRead']);
+    Route::patch('/notifications/{id}/mark-read', [App\Http\Controllers\NotificationController::class, 'markAsRead']);
+});

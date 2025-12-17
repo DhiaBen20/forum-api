@@ -16,6 +16,10 @@ use Illuminate\Support\Carbon;
  * @property-read int|null $comment_id
  * @property-read int|null $reply_to_id
  * @property-read int $user_id
+ * @property-read User|null $user
+ * @property-read Post|null $post
+ * @property-read Comment|null $comment
+ * @property-read Comment|null $replyTo
  * @property-read Carbon $created_at
  * @property-read Carbon $updated_at
  */
@@ -49,5 +53,11 @@ class Comment extends Model
     public function comment(): BelongsTo
     {
         return $this->belongsTo(Comment::class);
+    }
+
+    /** @return BelongsTo<Comment, $this> */
+    public function replyTo(): BelongsTo
+    {
+        return $this->belongsTo(Comment::class, 'reply_to_id');
     }
 }

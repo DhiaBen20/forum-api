@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Http\Comments;
+namespace Tests\Feature\Comments;
 
 use App\Http\Controllers\CommentController;
 use App\Models\Comment;
