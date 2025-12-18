@@ -2,36 +2,33 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Resources\NotificationCollection;
+use App\Models\User;
+use Illuminate\Container\Attributes\CurrentUser;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
 class NotificationController extends Controller
 {
-    /**
-     * Get all unread notifications for the user.
-     */
-    public function index(Request $request)
+    public function index(#[CurrentUser()] User $user): JsonResponse
     {
-        return $request->user()->unreadNotifications;
+        return response()->json(
+            NotificationCollection::make($user->unreadNotifications),
+            200
+        );
     }
 
-    /**
-     * Mark all unread notifications as read.
-     */
-    public function markAllAsRead(Request $request): Response
+    public function markAllAsRead(#[CurrentUser()] User $user): Response
     {
-        $request->user()->unreadNotifications->markAsRead();
+        $user->unreadNotifications->markAsRead();
 
         return response()->noContent();
     }
 
-    /**
-     * Mark a single notification as read.
-     */
-    public function markAsRead(Request $request, string $id): Response
+    public function markAsRead(#[CurrentUser()] User $user, string $id): Response
     {
-        $notification = $request->user()->notifications()->findOrFail($id);
-        
+        $notification = $user->notifications()->findOrFail($id);
+
         $notification->markAsRead();
 
         return response()->noContent();

@@ -16,6 +16,9 @@ use Laravel\Sanctum\HasApiTokens;
  * @property-read string $password
  * @property-read ?string $remember_token
  * @property-read ?carbon $email_verified_at
+ * @property-read \Illuminate\Notifications\DatabaseNotification $notifications
+ * @property-read \Illuminate\Notifications\DatabaseNotification $readNotifications
+ * @property-read \Illuminate\Notifications\DatabaseNotification $unreadNotifications
  * @property-read Carbon $created_at
  * @property-read carbon $updated_at
  */

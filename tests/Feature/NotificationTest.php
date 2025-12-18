@@ -2,14 +2,12 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
-use App\Models\Post;
-use App\Models\Comment;
-use App\Notifications\CommentReceived;
 use App\CommentType;
+use App\Models\Comment;
+use App\Models\Post;
+use App\Models\User;
+use App\Notifications\CommentReceived;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 
 class NotificationTest extends TestCase
@@ -20,20 +18,18 @@ class NotificationTest extends TestCase
     {
         $this->getJson('/api/notifications/unread')
             ->assertUnauthorized();
-            
+
         $this->patchJson('/api/notifications/mark-all-read')
             ->assertUnauthorized();
-            
+
         $this->patchJson('/api/notifications/INVALID_ID/mark-read')
             ->assertUnauthorized();
     }
 
     public function test_user_can_get_unread_notifications(): void
     {
-        $user = User::factory()->create();
-        $this->actingAs($user);
+        $user = $this->sanctumSignIn();
 
-        // Create notification
         $post = Post::factory()->create();
         $comment = Comment::factory()->for($post)->create();
         $user->notify(new CommentReceived($comment->user, CommentType::CommentToPost, $comment));
@@ -46,14 +42,12 @@ class NotificationTest extends TestCase
 
     public function test_user_can_mark_all_notifications_as_read(): void
     {
-        $user = User::factory()->create();
-        $this->actingAs($user);
+        $user = $this->sanctumSignIn();
 
-        // Create notification
         $post = Post::factory()->create();
         $comment = Comment::factory()->for($post)->create();
         $user->notify(new CommentReceived($comment->user, CommentType::CommentToPost, $comment));
-        
+
         $this->assertEquals(1, $user->unreadNotifications()->count());
 
         $response = $this->patchJson('/api/notifications/mark-all-read');
@@ -64,14 +58,12 @@ class NotificationTest extends TestCase
 
     public function test_user_can_mark_single_notification_as_read(): void
     {
-        $user = User::factory()->create();
-        $this->actingAs($user);
+        $user = $this->sanctumSignIn();
 
-        // Create notification
         $post = Post::factory()->create();
         $comment = Comment::factory()->for($post)->create();
         $user->notify(new CommentReceived($comment->user, CommentType::CommentToPost, $comment));
-        
+
         $notification = $user->notifications()->first();
 
         $response = $this->patchJson("/api/notifications/{$notification->id}/mark-read");
@@ -83,7 +75,6 @@ class NotificationTest extends TestCase
 
     public function test_user_cannot_mark_others_notification_as_read(): void
     {
-        $user = User::factory()->create();
         $otherUser = User::factory()->create();
 
         // Notification for other user
@@ -92,7 +83,8 @@ class NotificationTest extends TestCase
         $otherUser->notify(new CommentReceived($comment->user, CommentType::CommentToPost, $comment));
         $notification = $otherUser->notifications()->first();
 
-        $this->actingAs($user);
+        $user = User::factory()->create();
+        $this->sanctumSignIn($user);
 
         $response = $this->patchJson("/api/notifications/{$notification->id}/mark-read");
 

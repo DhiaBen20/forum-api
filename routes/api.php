@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\LikeController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\TokenController;
 use App\Http\Controllers\UserController;
@@ -38,7 +39,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 // Notification Routes
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/notifications/unread', [App\Http\Controllers\NotificationController::class, 'index']);
-    Route::patch('/notifications/mark-all-read', [App\Http\Controllers\NotificationController::class, 'markAllAsRead']);
-    Route::patch('/notifications/{id}/mark-read', [App\Http\Controllers\NotificationController::class, 'markAsRead']);
+    Route::get('/notifications/unread', [NotificationController::class, 'index']);
+    Route::patch('/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead']);
+    Route::patch('/notifications/{id}/mark-read', [NotificationController::class, 'markAsRead']);
 });
