@@ -18,7 +18,7 @@ class CommentCollection extends ResourceCollection
     public function toArray(Request $request): array
     {
         return $this->through(
-            fn ($comment) => CommentResource::make($comment)
+            fn ($comment) => CommentResource::make($comment)->additional($this->additional)
         )->toArray();
     }
 }

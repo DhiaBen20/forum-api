@@ -18,6 +18,7 @@ return new class extends Migration
             $table->text('body');
             $table->foreignId('user_id')->index();
             $table->foreignId('channel_id')->index();
+            $table->foreignId('best_answer_id')->nullable()->index();
             $table->timestamps();
         });
     }

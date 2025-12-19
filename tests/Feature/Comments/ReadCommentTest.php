@@ -70,6 +70,7 @@ class ReadCommentTest extends TestCase
                         'likesCount',
                         'repliesCount',
                         'isLiked',
+                        'isBestAnswer',
                         'created_at',
                         'updated_at',
                     ],
@@ -79,7 +80,7 @@ class ReadCommentTest extends TestCase
 
     public function test_user_can_see_replies_for_a_comment(): void
     {
-        $comment = Comment::factory()->create();
+        $comment = Comment::factory()->comment()->create();
         $replies = Comment::factory(2)->create([
             'comment_id' => $comment->id,
         ]);
@@ -126,5 +127,19 @@ class ReadCommentTest extends TestCase
         $this->getJson($this->action(['type' => 'post', 'parent' => $post->id]))
             ->assertJsonPath('data.0.repliesCount', 2)
             ->assertJsonPath('data.1.repliesCount', 3);
+    }
+
+    public function test_user_can_see_best_answer_comment(): void
+    {
+        $post = Post::factory()->create();
+        $comment = Comment::factory()->for($post)->create();
+
+        $this->getJson($this->action(['type' => 'post', 'parent' => $post->id]))
+            ->assertJsonPath('data.0.isBestAnswer', false);
+
+        $post->update(['best_answer_id' => $comment->id]);
+
+        $this->getJson($this->action(['type' => 'post', 'parent' => $post->id]))
+            ->assertJsonPath('data.0.isBestAnswer', true);
     }
 }

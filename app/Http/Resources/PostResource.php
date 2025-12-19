@@ -36,6 +36,7 @@ class PostResource extends JsonResource
             'commentsCount' => $this->whenCounted('comments'),
             'likesCount' => $this->whenCounted('likes'),
             'isLiked' => $this->likes_exists ?? false,
+            'bestAnswerId' => $this->best_answer_id,
             'createdAt' => $this->created_at,
             'updatedAt' => $this->updated_at,
         ];

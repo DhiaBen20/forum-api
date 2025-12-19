@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Models\Comment;
+use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -14,6 +15,8 @@ class CommentResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $parentPost = array_key_exists('parentPost', $this->additional) ? $this->additional['parentPost'] : null;
+
         return [
             'id' => $this->id,
             'body' => $this->body,
@@ -21,6 +24,7 @@ class CommentResource extends JsonResource
             'likesCount' => $this->whenCounted('likes'),
             'repliesCount' => $this->whenCounted('replies'),
             'isLiked' => $this->likes_exists ?? false,
+            'isBestAnswer' => $this->when($parentPost instanceof Post, fn () => $parentPost->best_answer_id === $this->id),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

@@ -19,6 +19,7 @@ return new class extends Migration
             // another way is instead of comment_id and reply_to_id just use one parent_id column
             $table->foreignId('comment_id')->nullable()->index();
             $table->foreignId('reply_to_id')->nullable()->index();
+            $table->timestamp('marked_as_best_at')->nullable();
             $table->timestamps();
         });
     }

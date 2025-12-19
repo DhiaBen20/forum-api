@@ -24,35 +24,9 @@ class ReadPostTest extends TestCase
             'isLiked',
             'likesCount',
             'commentsCount',
+            'bestAnswerId',
             'user' => ['id', 'name', 'email'],
         ];
-    }
-
-    protected function assertPostIsLiked(Post $post, bool $liked = false): void
-    {
-        $this->getJson(route('posts.index'))
-            ->assertJsonPath('data.0.isLiked', $liked);
-
-        $this->getJson(route('posts.show', $post->slug))
-            ->assertJsonPath('isLiked', $liked);
-    }
-
-    protected function assertPostLikesCount(Post $post, int $count)
-    {
-        $this->getJson(route('posts.index'))
-            ->assertJsonPath('data.0.likesCount', $count);
-
-        $this->getJson(route('posts.show', $post->slug))
-            ->assertJsonPath('likesCount', $count);
-    }
-
-    protected function assertCommentCount(Post $post, int $count)
-    {
-        $this->getJson(route('posts.index'))
-            ->assertJsonPath('data.0.commentsCount', $count);
-
-        $this->getJson(route('posts.show', $post->slug))
-            ->assertJsonPath('commentsCount', $count);
     }
 
     public function test_can_list_posts(): void
@@ -86,6 +60,15 @@ class ReadPostTest extends TestCase
             ->assertJson(['id' => $post->id]);
     }
 
+    protected function assertPostIsLiked(Post $post, bool $liked = false): void
+    {
+        $this->getJson(route('posts.index'))
+            ->assertJsonPath('data.0.isLiked', $liked);
+
+        $this->getJson(route('posts.show', $post->slug))
+            ->assertJsonPath('isLiked', $liked);
+    }
+
     public function test_user_can_see_if_he_liked_a_post(): void
     {
         $post = Post::factory()->create();
@@ -100,6 +83,15 @@ class ReadPostTest extends TestCase
         $this->assertPostIsLiked($post, true);
     }
 
+    protected function assertPostLikesCount(Post $post, int $count)
+    {
+        $this->getJson(route('posts.index'))
+            ->assertJsonPath('data.0.likesCount', $count);
+
+        $this->getJson(route('posts.show', $post->slug))
+            ->assertJsonPath('likesCount', $count);
+    }
+
     public function test_user_can_see_the_number_of_likes(): void
     {
         $post = Post::factory()->create();
@@ -111,6 +103,15 @@ class ReadPostTest extends TestCase
         $this->assertPostLikesCount($post, 3);
     }
 
+    protected function assertCommentCount(Post $post, int $count)
+    {
+        $this->getJson(route('posts.index'))
+            ->assertJsonPath('data.0.commentsCount', $count);
+
+        $this->getJson(route('posts.show', $post->slug))
+            ->assertJsonPath('commentsCount', $count);
+    }
+
     public function test_user_can_see_the_number_of_comment(): void
     {
         $post = Post::factory()->create();
@@ -120,6 +121,20 @@ class ReadPostTest extends TestCase
         Comment::factory()->count(3)->for($post)->create();
 
         $this->assertCommentCount($post, 3);
+    }
+
+    public function test_user_can_see_if_a_post_has_an_answer(): void
+    {
+        $post = Post::factory()->create();
+        $comment = Comment::factory()->for($post)->create();
+
+        $this->getJson(route('posts.index'))
+            ->assertJsonPath('data.0.bestAnswerId', null);
+
+        $post->update(['best_answer_id' => $comment->id]);
+
+        $this->getJson(route('posts.index'))
+            ->assertJsonPath('data.0.bestAnswerId', $comment->id);
     }
 
     public function test_show_returns_404_if_post_not_found(): void

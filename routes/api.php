@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BestAnswerController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\NotificationController;
@@ -21,6 +22,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('posts', [PostController::class, 'store'])->name('posts.store');
     Route::patch('posts/{post:slug}', [PostController::class, 'update'])->name('posts.update');
     Route::delete('posts/{post:slug}', [PostController::class, 'destroy'])->name('posts.destroy');
+
 });
 
 // Comment and Reply Routes
@@ -29,6 +31,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/comments', [CommentController::class, 'store']);
     Route::patch('comments/{comment}', [CommentController::class, 'update'])->name('comments.update');
     Route::delete('comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
+    Route::patch('/comments/{comment}/best-answer', BestAnswerController::class);
 });
 
 // Likes Routes

@@ -8,14 +8,14 @@ use App\Http\Requests\StoreCommentRequest;
 use App\Http\Resources\CommentCollection;
 use App\Http\Resources\CommentResource;
 use App\Models\Comment;
+use App\Models\Post;
 use App\Models\User;
 use Illuminate\Container\Attributes\CurrentUser;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Str;
 
 class CommentController extends Controller
 {
@@ -28,7 +28,9 @@ class CommentController extends Controller
             return response()->json([], 400);
         }
 
-        if (! DB::table(Str::plural($type))->where('id', $parent)->exists()) {
+        try {
+            $post = $this->getParentPost($type, $parent);
+        } catch (ModelNotFoundException $e) {
             return response()->json(status: 404);
         }
 
@@ -43,7 +45,10 @@ class CommentController extends Controller
             ->orderBy('created_at')
             ->simplePaginate(15);
 
-        return response()->json(CommentCollection::make($comments), 200);
+        return response()->json(
+            CommentCollection::make($comments)->additional(['parentPost' => $post]),
+            200
+        );
     }
 
     public function store(StoreCommentRequest $request, #[CurrentUser()] User $user): JsonResponse
@@ -83,5 +88,17 @@ class CommentController extends Controller
         $comment->delete();
 
         return response()->json(status: 204);
+    }
+
+    protected function getParentPost(string $type, ?string $id): Post
+    {
+        if ($type === 'post') {
+            return Post::findOrFail($id);
+        }
+
+        return Post::query()
+            ->join('comments', 'posts.id', 'comments.post_id')
+            ->where('comments.id', $id)
+            ->firstOrFail();
     }
 }
