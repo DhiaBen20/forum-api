@@ -60,4 +60,13 @@ class Comment extends Model
     {
         return $this->belongsTo(Comment::class, 'reply_to_id');
     }
+
+    public function parentPost(): ?Post
+    {
+        return $this->post_id ? $this->post : Post::query()
+            ->select('posts.*')
+            ->join('comments', 'posts.id', 'comments.post_id')
+            ->where('comments.id', $this->comment_id)
+            ->first();
+    }
 }

@@ -29,7 +29,7 @@ class CommentController extends Controller
         }
 
         try {
-            $post = $this->getParentPost($type, $parent);
+            $post = $type === 'post' ? Post::findOrFail($parent) : Post::whereRelation('comments', 'id', $parent)->firstOrFail();
         } catch (ModelNotFoundException $e) {
             return response()->json(status: 404);
         }
@@ -88,17 +88,5 @@ class CommentController extends Controller
         $comment->delete();
 
         return response()->json(status: 204);
-    }
-
-    protected function getParentPost(string $type, ?string $id): Post
-    {
-        if ($type === 'post') {
-            return Post::findOrFail($id);
-        }
-
-        return Post::query()
-            ->join('comments', 'posts.id', 'comments.post_id')
-            ->where('comments.id', $id)
-            ->firstOrFail();
     }
 }

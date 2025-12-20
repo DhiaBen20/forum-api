@@ -32,7 +32,7 @@ class MarkBestAnswerTest extends TestCase
         $post = Post::factory()->create(['user_id' => $user->id]);
         $comment = Comment::factory()->create(['post_id' => $post->id]);
 
-        $post->update(["best_answer_id" => $comment->id]);
+        $post->update(['best_answer_id' => $comment->id]);
 
         $this->sanctumSignIn($user);
 
@@ -49,7 +49,7 @@ class MarkBestAnswerTest extends TestCase
         $comment1 = Comment::factory()->create(['post_id' => $post->id]);
         $comment2 = Comment::factory()->create(['post_id' => $post->id]);
 
-        $post->update(["best_answer_id" => $comment1->id]);
+        $post->update(['best_answer_id' => $comment1->id]);
 
         $this->sanctumSignIn($user);
 
@@ -70,5 +70,20 @@ class MarkBestAnswerTest extends TestCase
 
         $response->assertStatus(403);
         $this->assertNull($post->fresh()->best_answer_id);
+    }
+
+    public function test_post_owner_can_mark_nested_comment_as_best_answer()
+    {
+        $user = User::factory()->create();
+        $post = Post::factory()->create(['user_id' => $user->id]);
+        $parentComment = Comment::factory()->for($post)->create();
+        $nestedComment = Comment::factory()->for($parentComment)->create();
+
+        $this->sanctumSignIn($user);
+
+        $response = $this->patchJson("/api/comments/{$nestedComment->id}/best-answer");
+
+        $response->assertStatus(200);
+        $this->assertEquals($nestedComment->id, $post->fresh()->best_answer_id);
     }
 }
