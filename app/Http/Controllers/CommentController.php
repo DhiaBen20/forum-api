@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\CommentType;
 use App\Events\CommentStored;
 use App\Http\Requests\StoreCommentRequest;
 use App\Http\Resources\CommentCollection;
@@ -61,11 +60,7 @@ class CommentController extends Controller
             'reply_to_id' => $request->validated('replyTo'),
         ]);
 
-        CommentStored::dispatch(
-            $request->enum('type', CommentType::class),
-            $user,
-            $comment,
-        );
+        CommentStored::dispatch($user, $comment);
 
         return response()->json(CommentResource::make($comment), 201);
     }

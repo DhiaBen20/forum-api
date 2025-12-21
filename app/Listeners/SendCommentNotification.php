@@ -13,24 +13,20 @@ class SendCommentNotification implements ShouldQueue
 {
     public function handle(CommentStored $event): void
     {
-        if (! $event->type) {
-            return;
-        }
-
-        $notifiable = $this->getNotifiable($event->comment, $event->type);
+        $notifiable = $this->getNotifiable($event->comment);
 
         if (! $notifiable || $event->currentUser->is($notifiable)) {
             return;
         }
 
         $notifiable->notify(
-            new CommentReceived($event->currentUser, $event->type, $event->comment)
+            new CommentReceived($event->currentUser, $event->comment)
         );
     }
 
-    protected function getNotifiable(Comment $comment, CommentType $type): ?User
+    protected function getNotifiable(Comment $comment): ?User
     {
-        $commentedOn = match ($type) {
+        $commentedOn = match ($comment->type) {
             CommentType::CommentToPost => $comment->post,
             CommentType::ReplyToReply => $comment->replyTo,
             CommentType::ReplyToComment => $comment->comment

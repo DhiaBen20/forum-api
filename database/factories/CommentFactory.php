@@ -17,6 +17,9 @@ class CommentFactory extends Factory
         return [
             'body' => fake()->sentence(),
             'user_id' => User::factory(),
+            'post_id' => null,
+            'comment_id' => null,
+            'reply_to_id' => null,
         ];
     }
 

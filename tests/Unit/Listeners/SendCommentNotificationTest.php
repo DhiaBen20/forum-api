@@ -2,7 +2,6 @@
 
 namespace Tests\Unit\Listeners;
 
-use App\CommentType;
 use App\Events\CommentStored;
 use App\Listeners\SendCommentNotification;
 use App\Models\Comment;
@@ -33,9 +32,9 @@ class SendCommentNotificationTest extends TestCase
         $comment2 = Comment::factory()->for($targetComment, 'comment')->create();
         $comment3 = Comment::factory()->state(['comment_id' => $targetReply, 'reply_to_id' => $targetReply])->create();
 
-        $event1 = new CommentStored(CommentType::CommentToPost, $comment1->user, $comment1);
-        $event2 = new CommentStored(CommentType::ReplyToComment, $comment2->user, $comment2);
-        $event3 = new CommentStored(CommentType::ReplyToReply, $comment3->user, $comment3);
+        $event1 = new CommentStored($comment1->user, $comment1);
+        $event2 = new CommentStored($comment2->user, $comment2);
+        $event3 = new CommentStored($comment3->user, $comment3);
 
         $listener = new SendCommentNotification;
         $listener->handle($event1);
@@ -57,7 +56,7 @@ class SendCommentNotificationTest extends TestCase
 
         $comment = Comment::factory()->for($user)->create();
 
-        $event = new CommentStored(CommentType::CommentToPost, $comment->user, $comment);
+        $event = new CommentStored($comment->user, $comment);
 
         $listener = new SendCommentNotification;
         $listener->handle($event);
@@ -65,15 +64,3 @@ class SendCommentNotificationTest extends TestCase
         Notification::assertNothingSent();
     }
 }
-
-/**
- * like notifications:
- * message: user liked your post. data: actor user info, post id. | likeable type is post
- * message: user liked your comment. data: actor user info, post id, comment id. | likeable type is comment
- * message: user liked your reply. data: actor user info, post id, comment id. | likeable type is reply (comment in db)
- *
- * comment notifications:
- * message: user commented on your post. data: actor user info, post id, comment id, parent type
- * message: user replied to your comment. data: actor user info, post id, comment id, parent type
- * message: user replied to your reply. data: actor user info, post id, comment id, parent type
- */

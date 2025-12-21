@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\CommentType;
 use App\Models\Comment;
 use App\Models\Post;
 use App\Models\User;
@@ -32,7 +31,7 @@ class NotificationTest extends TestCase
 
         $post = Post::factory()->create();
         $comment = Comment::factory()->for($post)->create();
-        $user->notify(new CommentReceived($comment->user, CommentType::CommentToPost, $comment));
+        $user->notify(new CommentReceived($comment->user, $comment));
 
         $response = $this->getJson('/api/notifications/unread');
 
@@ -46,7 +45,7 @@ class NotificationTest extends TestCase
 
         $post = Post::factory()->create();
         $comment = Comment::factory()->for($post)->create();
-        $user->notify(new CommentReceived($comment->user, CommentType::CommentToPost, $comment));
+        $user->notify(new CommentReceived($comment->user, $comment));
 
         $this->assertEquals(1, $user->unreadNotifications()->count());
 
@@ -62,7 +61,7 @@ class NotificationTest extends TestCase
 
         $post = Post::factory()->create();
         $comment = Comment::factory()->for($post)->create();
-        $user->notify(new CommentReceived($comment->user, CommentType::CommentToPost, $comment));
+        $user->notify(new CommentReceived($comment->user, $comment));
 
         $notification = $user->notifications()->first();
 
@@ -80,7 +79,7 @@ class NotificationTest extends TestCase
         // Notification for other user
         $post = Post::factory()->create();
         $comment = Comment::factory()->for($post)->create();
-        $otherUser->notify(new CommentReceived($comment->user, CommentType::CommentToPost, $comment));
+        $otherUser->notify(new CommentReceived($comment->user, $comment));
         $notification = $otherUser->notifications()->first();
 
         $user = User::factory()->create();

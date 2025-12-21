@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\CommentType;
 use App\Likeable;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -30,6 +32,23 @@ class Comment extends Model
      * @use HasFactory<\Database\Factories\CommentFactory>
      */
     use HasFactory, Likeable;
+
+    /**
+     * @return Attribute<CommentType,never>
+     */
+    protected function type(): Attribute
+    {
+        return Attribute::make(get: function (mixed $value, array $attributes) {
+            if ($attributes['post_id']) {
+                return CommentType::CommentToPost;
+            }
+            if ($attributes['reply_to_id']) {
+                return CommentType::ReplyToReply;
+            }
+
+            return CommentType::ReplyToComment;
+        });
+    }
 
     /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo

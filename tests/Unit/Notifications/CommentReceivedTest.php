@@ -20,7 +20,7 @@ class CommentReceivedTest extends TestCase
         $reply = Comment::factory()->for($comment, 'comment')->create();
 
         $comment1 = Comment::factory()->for($post)->create();
-        $notification1 = new CommentReceived($comment1->user, CommentType::CommentToPost, $comment1);
+        $notification1 = new CommentReceived($comment1->user, $comment1);
 
         $this->assertEquals(
             [
@@ -32,7 +32,7 @@ class CommentReceivedTest extends TestCase
         );
 
         $comment2 = Comment::factory()->for($comment, 'comment')->create();
-        $notification2 = new CommentReceived($comment2->user, CommentType::ReplyToComment, $comment2);
+        $notification2 = new CommentReceived($comment2->user, $comment2);
 
         $this->assertEquals(
             [
@@ -44,7 +44,7 @@ class CommentReceivedTest extends TestCase
         );
 
         $comment3 = Comment::factory()->for($comment, 'comment')->create(['reply_to_id' => $reply->id]);
-        $notification3 = new CommentReceived($comment3->user, CommentType::ReplyToReply, $comment3);
+        $notification3 = new CommentReceived($comment3->user, $comment3);
 
         $this->assertEquals(
             [

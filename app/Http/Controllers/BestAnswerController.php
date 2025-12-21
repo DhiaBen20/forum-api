@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\PostAnswered;
 use App\Models\Comment;
 use App\Models\User;
 use Illuminate\Container\Attributes\CurrentUser;
@@ -23,6 +24,8 @@ class BestAnswerController extends Controller
         $post->update([
             'best_answer_id' => $post->best_answer_id === $comment->id ? null : $comment->id,
         ]);
+
+        PostAnswered::dispatch($user, $post, $comment);
 
         return response()->json();
     }

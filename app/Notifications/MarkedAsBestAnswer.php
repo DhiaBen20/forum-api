@@ -3,18 +3,16 @@
 namespace App\Notifications;
 
 use App\Models\Comment;
+use App\Models\Post;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 
-class CommentReceived extends Notification
+class MarkedAsBestAnswer extends Notification
 {
     use Queueable;
 
-    public function __construct(
-        public User $actor,
-        public Comment $comment,
-    ) {}
+    public function __construct(public User $actor, public Post $post, public Comment $comment) {}
 
     /**
      * @param  \App\Models\User  $notifiable
@@ -36,22 +34,11 @@ class CommentReceived extends Notification
                 'id' => $this->actor->id,
                 'name' => $this->actor->name,
             ],
-            'post_id' => $this->getParentPostId(),
+            'post_id' => $this->post->id,
             'comment' => [
                 'id' => $this->comment->id,
                 'type' => $this->comment->type->value,
             ],
         ];
-    }
-
-    protected function getParentPostId(): ?int
-    {
-        $comment = $this->comment;
-
-        if ($comment->post_id) {
-            return $comment->post_id;
-        }
-
-        return $comment->comment?->post_id;
     }
 }

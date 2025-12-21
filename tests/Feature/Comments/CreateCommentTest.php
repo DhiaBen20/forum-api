@@ -90,8 +90,7 @@ class CreateCommentTest extends TestCase
 
         Event::assertDispatched(function (CommentStored $event) use ($user, $post) {
             return $event->currentUser->is($user) &&
-                $event->comment->is($post->comments()->first()) &&
-                $event->type === CommentType::CommentToPost;
+                $event->comment->is($post->comments()->first());
         });
 
         Event::assertListening(CommentStored::class, SendCommentNotification::class);
@@ -123,8 +122,7 @@ class CreateCommentTest extends TestCase
 
         Event::assertDispatched(function (CommentStored $event) use ($user, $comment) {
             return $event->currentUser->is($user) &&
-                $event->comment->is($comment->replies()->first()) &&
-                $event->type === CommentType::ReplyToComment;
+                $event->comment->is($comment->replies()->first());
         });
 
         Event::assertListening(CommentStored::class, SendCommentNotification::class);
@@ -160,8 +158,7 @@ class CreateCommentTest extends TestCase
 
         Event::assertDispatched(function (CommentStored $event) use ($user, $targetReply) {
             return $event->currentUser->is($user) &&
-                $event->comment->is(Comment::where('reply_to_id', $targetReply->id)->first()) &&
-                $event->type === CommentType::ReplyToReply;
+                $event->comment->is(Comment::where('reply_to_id', $targetReply->id)->first());
         });
 
         Event::assertListening(CommentStored::class, SendCommentNotification::class);
